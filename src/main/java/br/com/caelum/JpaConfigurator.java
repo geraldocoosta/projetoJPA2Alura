@@ -1,5 +1,6 @@
 package br.com.caelum;
 
+import java.beans.PropertyVetoException;
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
@@ -7,26 +8,39 @@ import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @Configuration
 @EnableTransactionManagement
 public class JpaConfigurator {
 
 	@Bean
-	public DataSource getDataSource() {
-	    DriverManagerDataSource dataSource = new DriverManagerDataSource();
+	public DataSource getDataSource() throws PropertyVetoException {
+		/* Data source c3p0 com limitador de pool, mt bom e dahora */
+		ComboPooledDataSource dataSource = new ComboPooledDataSource();
 
-	    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-	    dataSource.setUrl("jdbc:mysql://localhost/projeto_jpa");
-	    dataSource.setUsername("root");
-	    dataSource.setPassword("");
+		dataSource.setDriverClass("com.mysql.jdbc.Driver");
+		dataSource.setJdbcUrl("jdbc:mysql://localhost/projeto_jpa");
+		dataSource.setUser("root");
+		dataSource.setPassword("");
 
-	    return dataSource;
+		dataSource.setMinPoolSize(5);
+		dataSource.setMaxPoolSize(10);
+
+		/*
+		 * Precisamos ensinar o pool a matar as conexões que ficam ociosas por muito
+		 * tempo, eliminando o risco de escolher uma conexão quebrada, pq pode acontecer
+		 * de o bd cair por alguns momentos e as conexões que estavam abertas com o db
+		 * quebrarem
+		 */
+		dataSource.setIdleConnectionTestPeriod(1); // a cada um segundo testamos as conexões ociosas
+
+		return dataSource;
 	}
 
 	@Bean
@@ -36,8 +50,7 @@ public class JpaConfigurator {
 		entityManagerFactory.setPackagesToScan("br.com.caelum");
 		entityManagerFactory.setDataSource(dataSource);
 
-		entityManagerFactory
-				.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+		entityManagerFactory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
 		Properties props = new Properties();
 
