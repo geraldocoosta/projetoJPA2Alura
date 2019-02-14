@@ -1,6 +1,7 @@
 
 package br.com.caelum.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -8,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -24,20 +27,22 @@ public class Produto {
 	private String nome;
 	@NotEmpty
 	private String linkDaFoto;
-	
+
 	@NotEmpty
-	@Column(columnDefinition="TEXT")
+	@Column(columnDefinition = "TEXT")
 	private String descricao;
-	
+
 	@Min(20)
 	private double preco;
-	
-	
+
+	@ManyToMany
+	@JoinTable(name = "CATEGORIA_PRODUTO")
+	private List<Categoria> categorias = new ArrayList<>();
+
 	@Valid
 	@ManyToOne
 	private Loja loja;
-	
-	
+
 	public String getDescricao() {
 		return descricao;
 	}
@@ -45,19 +50,27 @@ public class Produto {
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-	
-	//método auxiliar para associar categorias com o produto
-	//se funcionar apos ter definido o relacionamento entre produto e categoria
-//	public void adicionarCategorias(Categoria... categorias) {
-//		for (Categoria categoria : categorias) {
-//			this.categorias.add(categoria);
-//		}
-//	}
+
+	// método auxiliar para associar categorias com o produto
+	// se funcionar apos ter definido o relacionamento entre produto e categoria
+	public void adicionarCategorias(Categoria... categorias) {
+		for (Categoria categoria : categorias) {
+			this.categorias.add(categoria);
+		}
+	}
 
 	public String getLinkDaFoto() {
 		return linkDaFoto;
 	}
-	
+
+	public List<Categoria> getCategoria() {
+		return categorias;
+	}
+
+	public void setCategoria(List<Categoria> categoria) {
+		this.categorias = categoria;
+	}
+
 	public double getPreco() {
 		return preco;
 	}
@@ -69,7 +82,7 @@ public class Produto {
 	public void setLinkDaFoto(String linkDaFoto) {
 		this.linkDaFoto = linkDaFoto;
 	}
-	
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
