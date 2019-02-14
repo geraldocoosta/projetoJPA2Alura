@@ -1,4 +1,4 @@
-#Curso de Java e JPA: Otimizações com JPA2 e Hibernate
+# Curso de Java e JPA: Otimizações com JPA2 e Hibernate
 
 ## O projeto deve ser importado com maven project
 
