@@ -25,6 +25,7 @@ public class ProdutoDao {
 
 	public List<Produto> getProdutos() {
 		return em.createQuery("select distinct p from Produto p", Produto.class)
+				.setHint("org.hibernate.cacheable", "true")
 				.setHint("javax.persistence.loadgraph", em.getEntityGraph("produtoComCategoria")).getResultList();
 	}
 
@@ -123,6 +124,7 @@ public class ProdutoDao {
 		 */
 
 		TypedQuery<Produto> typedQuery = em.createQuery(query);
+		typedQuery.setHint("org.hibernate.cacheable", "true");
 		return typedQuery.getResultList();
 
 		/*

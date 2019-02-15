@@ -57,6 +57,15 @@ public class JpaConfigurator {
 		props.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
 		props.setProperty("hibernate.show_sql", "true");
 		props.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+		// propriedade para o hibernate usar um cache de segundo nivel
+		props.setProperty("hibernate.cache.use_second_level_cache", "true");
+		// armazenar em cache o resultado de uma query feita para determinados
+		// parâmetros e, com isso, poderemos buscar no cache ao em vez de ir diretamente
+		// ao banco.
+		props.setProperty("hibernate.cache.use_query_cache", "true");
+		// provedor de cache que usaremos.
+		props.setProperty("hibernate.cache.region.factory_class",
+				"org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory");
 
 		entityManagerFactory.setJpaProperties(props);
 		return entityManagerFactory;

@@ -19,11 +19,14 @@ import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @NamedEntityGraphs({
 		@NamedEntityGraph(name = "produtoComCategoria", attributeNodes = { @NamedAttributeNode("categorias") }) })
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Produto {
 
 	@Id
@@ -39,13 +42,13 @@ public class Produto {
 	private String descricao;
 
 	/*
-	 * Uma estratégia mais radical de Lock é impedir, de fato, que os conflitos
+	 * Uma estratï¿½gia mais radical de Lock ï¿½ impedir, de fato, que os conflitos
 	 * ocorram por meio de uma trava do registro. Podemos usar o Lock Pessimista
 	 * para conseguir essa trava limitando com que apenas um cliente de cada vez
 	 * tenha acesso ao registro.
 	 * 
-	 * A forma feita aqui é chamada de lock otimista, que lança uma exceção com base
-	 * na versão do objeto, anotado com @Version
+	 * A forma feita aqui ï¿½ chamada de lock otimista, que lanï¿½a uma exceï¿½ï¿½o com base
+	 * na versï¿½o do objeto, anotado com @Version
 	 */
 	@Version
 	private int versao;
@@ -55,6 +58,7 @@ public class Produto {
 
 	@ManyToMany
 	@JoinTable(name = "CATEGORIA_PRODUTO")
+	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	private List<Categoria> categorias = new ArrayList<>();
 
 	@Valid
