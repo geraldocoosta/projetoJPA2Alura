@@ -6,6 +6,8 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -31,6 +33,7 @@ public class JpaConfigurator {
 
 		dataSource.setMinPoolSize(5);
 		dataSource.setMaxPoolSize(10);
+		dataSource.setNumHelperThreads(15);
 
 		/*
 		 * Precisamos ensinar o pool a matar as conexões que ficam ociosas por muito
@@ -41,6 +44,12 @@ public class JpaConfigurator {
 		dataSource.setIdleConnectionTestPeriod(1); // a cada um segundo testamos as conexões ociosas
 
 		return dataSource;
+	}
+
+	@Bean
+	public Statistics statistics(EntityManagerFactory emf) {
+		SessionFactory factory = emf.unwrap(SessionFactory.class);
+		return factory.getStatistics();
 	}
 
 	@Bean
@@ -66,6 +75,8 @@ public class JpaConfigurator {
 		// provedor de cache que usaremos.
 		props.setProperty("hibernate.cache.region.factory_class",
 				"org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory");
+		// acionando recurso de estatistica do hibernade
+		props.setProperty("hibernate.generate_statistics", "true");
 
 		entityManagerFactory.setJpaProperties(props);
 		return entityManagerFactory;
