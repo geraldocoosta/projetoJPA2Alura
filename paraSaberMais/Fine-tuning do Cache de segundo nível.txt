@@ -1,0 +1,43 @@
+Em alguns casos, as configurações padrões do EhCache podem não nos ajudar. Para isso, podemos alterar esses valores configurando o arquivo XML chamado ehcache.xml. Vamos brincar um pouco com esse XML e vê-lo funcionando.
+
+Crie o arquivo ehcache.xml com o seguinte conteúdo:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>
+    <diskStore path="java.io.tmpdir" />
+
+    <defaultCache 
+        maxElementsInMemory="2" 
+        eternal="true"
+        overflowToDisk="false" />
+
+</ehcache>
+Nesse caso, configuramos o Ehcache para armazenar apenas dois objetos de cada vez. Após realizar essa configuração, reinicie o tomcat e siga os passos abaixo:
+
+1) Acesse a URL: http://localhost:8080/projeto-jpa-2/produto/1 e note que uma query foi disparada para buscar esse produto no banco. Esse produto então, foi armazenado em cache.
+
+
+
+2) Acesse a URL: http://localhost:8080/projeto-jpa-2/produto/2 e note que uma query foi disparada para buscar esse produto no banco. Esse produto então, foi armazenado em cache. Atingindo o limite que foi estipulado.
+
+
+
+3) Acesse a URL: http://localhost:8080/projeto-jpa-2/produto/3 e note que uma query foi disparada para buscar esse produto no banco. Esse produto então, foi armazenado em cache. Porém, como o limite já havia sido estipulado algum dos objetos armazenados em cache precisam ser removidos (nesse caso, o primeiro)
+
+
+
+4) Acesse a URL: http://localhost:8080/projeto-jpa-2/produto/1 e note que foi preciso buscar, novamente, o produto que não está mais em cache.
+
+5) Acesse a URL: http://localhost:8080/projeto-jpa-2/produto/3 para exibir as informações sobre o terceiro produto. Note que nenhuma query foi feita, pois é o produto que sobrou no cache.
+
+VER OPINIÃO DO INSTRUTOR
+Opinião do instrutor
+
+Também é possível ter configurações diferentes para cada entidade:
+
+<cache name="br.com.caelum.model.Produto"
+    maxElementsInMemory="300"
+    eternal="true"
+    overflowToDisk="false"
+/>
+Existe um mundo de possibilidades de configurações, caso queira conhecê-las um pouco melhor consulte a documentação do EhCache: http://www.ehcache.org/documentation/2.8/configuration/configuration.html
