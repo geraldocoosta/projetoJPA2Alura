@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
+import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
@@ -37,6 +38,18 @@ public class Produto {
 	@Column(columnDefinition = "TEXT")
 	private String descricao;
 
+	/*
+	 * Uma estratégia mais radical de Lock é impedir, de fato, que os conflitos
+	 * ocorram por meio de uma trava do registro. Podemos usar o Lock Pessimista
+	 * para conseguir essa trava limitando com que apenas um cliente de cada vez
+	 * tenha acesso ao registro.
+	 * 
+	 * A forma feita aqui é chamada de lock otimista, que lança uma exceção com base
+	 * na versão do objeto, anotado com @Version
+	 */
+	@Version
+	private int versao;
+
 	@Min(20)
 	private double preco;
 
@@ -54,6 +67,14 @@ public class Produto {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public int getVersao() {
+		return versao;
+	}
+
+	public void setVersao(int versao) {
+		this.versao = versao;
 	}
 
 	// mÃ©todo auxiliar para associar categorias com o produto
